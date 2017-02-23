@@ -21,6 +21,15 @@ Usage
 This does the same as calling `git rebase -i <revision>^`
 and then replacing the first word with `<action>` in EDITOR.
 
+To use as a git subcommand, insert the following in your `.gitconfif`:
+
+    [alias]
+        autorebase = ! /path/to/gitreb/script
+
+You can then do:
+
+    git autorebase edit :/some nasty bug
+
 Special cases
 -------------
 
@@ -59,7 +68,6 @@ and `$GIT_SEQUENCE_EDITOR` with `sed -i`.
 
 I was compelled to
 
-- fix the obvious flaws (incorrect commands and tests),
 - use `ed` which unlike `sed` is *supposed* to edit files in place,
 - make the script shell-agnostic,
 - use default `edit` behaviour instead of always using `reset HEAD^`,
