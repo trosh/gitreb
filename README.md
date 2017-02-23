@@ -37,7 +37,7 @@ Special cases
   of using `git rev-parse` to find the commit
   then applying `<commit>^` to the result.
 
-  [AFAIK](my question), `:/<text>` is the only notation
+  [AFAIK][my question], `:/<text>` is the only notation
   to which you can't just apply the lone caret modifier.
 
 Idea
@@ -47,13 +47,13 @@ I wanted to be able to use the following command intuitively:
 
     $ git rebase -i :/<text>^   # DOES NOT DO AS EXPECTED
 
-I wrote [this](my question) on Stack Overflow
+I wrote [this][my question] on Stack Overflow
 which describes the situation.
 
 I also don't like having to use EDITOR
 for such a simple to describe operation.
 
-[This](script by jezz) StackOverflow comment
+[This][script by jezz] StackOverflow comment
 mostly answers both concerns by using `git rev-parse`
 and `$GIT_SEQUENCE_EDITOR` with `sed -i`.
 
