@@ -74,7 +74,17 @@ FIRSTCOMMIT=`git rev-parse --short $FIRSTCOMMITLONG` || exit $?
 
 if test $COMMIT != $FIRSTCOMMIT
 then
+    if ! `git merge-base --is-ancestor $COMMIT^ HEAD`
+    then
+        echo "$COMMIT is in another branch"
+        exit 1
+    fi
     git rebase --preserve-merges -i $COMMIT^
 else
+    if ! `git merge-base --is-ancestor $COMMIT HEAD`
+    then
+        echo "$COMMIT is in another branch (HEAD is orphaned from root)"
+        exit 1
+    fi
     git rebase --preserve-merges --root
 fi
