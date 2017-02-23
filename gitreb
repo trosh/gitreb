@@ -1,0 +1,80 @@
+# Small interface over git rebase -i
+# Allows non-interactive rebasing
+# with action applied only to specified revision
+
+if test ${#*} -lt 2
+then
+    echo "Usage: `basename $0` <ACTION> <REVISION>"
+    echo "Example:"
+    echo "    `basename $0` drop HEAD~2"
+    echo "    `basename $0` edit :/some nasty bug"
+    exit 1
+fi
+
+git status &> /dev/null
+if test $? -ne 0
+then
+    echo not in working git repo
+    exit 1
+fi
+
+git status | grep '^interactive rebase in progress' &> /dev/null
+if test $? -eq 0
+then
+    echo currently rebasing
+    exit 1
+fi
+
+# Get first argument -> rebase action
+ACTION=$1
+
+# Check action
+CORRECT=
+for A in p pick r reword e edit s squash f fixup x exec d drop
+do
+    if test $ACTION = $A
+    then
+        CORRECT=true
+        break
+    fi
+done
+if test -z $CORRECT
+then
+    echo "Invalid action \"$ACTION\""
+    exit 1
+fi
+
+# Get following arguments -> revision parameters
+shift
+COMMIT=`git rev-parse --short "$*"` || exit $?
+if test -z $COMMIT
+then
+    echo "Invalid revision \"$*\""
+    exit 1
+fi
+
+EDCOMM="\
+# Enable help
+H
+# Go to start of sequence file
+1
+# Change word
+s/^pick/$ACTION
+# Write file
+w"
+
+export GIT_SEQUENCE_EDITOR="ed -s <<< \"$EDCOMM\""
+
+# Alternative, using sed :
+#export GIT_SEQUENCE_EDITOR="sed -i 's/^pick/$ACTION/;q'"
+
+# Check whether revision is initial commit
+FIRSTCOMMITLONG=`git rev-list --max-parents=0 HEAD` || exit $?
+FIRSTCOMMIT=`git rev-parse --short $FIRSTCOMMITLONG` || exit $?
+
+if test $COMMIT != $FIRSTCOMMIT
+then
+    git rebase -i $COMMIT^
+else
+    git rebase --root
+fi
