@@ -74,7 +74,7 @@ FIRSTCOMMIT=`git rev-parse --short $FIRSTCOMMITLONG` || exit $?
 
 if test $COMMIT != $FIRSTCOMMIT
 then
-    git rebase -i $COMMIT^
+    git rebase --preserve-merges -i $COMMIT^
 else
-    git rebase --root
+    git rebase --preserve-merges --root
 fi
