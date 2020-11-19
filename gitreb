@@ -36,13 +36,13 @@ then
 	exit 1
 fi
 
-export GIT_SEQUENCE_EDITOR="sed -i 's/^pick/$ACTION/;q'"
+export GIT_SEQUENCE_EDITOR="sed -i '1s/^pick/$ACTION/'"
 
 case "$ACTION" in
 
   d|drop|delete )
 
-	export GIT_SEQUENCE_EDITOR="sed -i 'd;q'"
+	export GIT_SEQUENCE_EDITOR="sed -i '1d'"
 	;&
 
   p|pick   | r|reword | e|edit | \
